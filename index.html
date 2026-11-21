@@ -1,1 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0a0a0a">
+<title>AGGRE MUSIC</title>
 
+<style>
+*{box-sizing:border-box}
+body{
+margin:0;background:#090909;color:white;
+font-family:Arial,sans-serif;padding-bottom:120px
+}
+header{
+padding:22px;font-size:25px;font-weight:900;
+color:#ff3030;letter-spacing:2px
+}
+.hero{
+margin:15px;padding:25px;height:230px;border-radius:20px;
+background:linear-gradient(135deg,#501212,#151515,#080808);
+display:flex;flex-direction:column;justify-content:flex-end
+}
+.hero small{color:#ff4444;letter-spacing:3px}
+.hero h1{font-size:38px;margin:12px 0}
+.hero p{color:#aaa}
+.section{padding:20px}
+.track{
+display:flex;align-items:center;background:#171717;
+padding:12px;border-radius:13px;margin-bottom:12px;gap:12px
+}
+.cover{
+width:58px;height:58px;background:#391515;border-radius:10px;
+display:grid;place-items:center;font-size:23px
+}
+.info{flex:1}
+.info h3{margin:0 0 7px;font-size:15px}
+.info p{margin:0;color:#888;font-size:12px}
+.playTrack{border:0;background:none;color:#ff3434;font-size:25px}
+.player{
+position:fixed;bottom:0;left:0;width:100%;
+background:#1b1b1b;padding:15px;border-top:1px solid #333
+}
+.playerTop{display:flex;align-items:center;justify-content:space-between}
+#currentTitle{font-weight:bold}
+.artist{color:#888;font-size:12px;margin-top:5px}
+.controls{display:flex;align-items:center;gap:15px}
+.controls button{border:0;background:none;color:white;font-size:22px}
+#playPause{
+background:#ff3434;border-radius:50%;width:45px;height:45px
+}
+.progress{height:4px;background:#444;margin-top:15px;border-radius:5px}
+#progressFill{height:4px;width:0;background:#ff3434;border-radius:5px}
+.lyrics{color:#ccc;line-height:1.9;padding:20px}
+footer{text-align:center;color:#555;padding:30px}
+</style>
+</head>
+
+<body>
+
+<header>AGGRE.</header>
+
+<section class="hero">
+<small>STREET DRILL • MUSIC</small>
+<h1>STREET LIFE</h1>
+<p>Real stories. Real struggle. Real music.</p>
+</section>
+
+<section class="section">
+<h2>🔥 My Playlist</h2>
+
+<div class="track">
+<div class="cover">🎵</div>
+<div class="info"><h3>Street Life</h3><p>AGGRE • Drill</p></div>
+<button class="playTrack" onclick="playTrack(0)">▶</button>
+</div>
+
+<div class="track">
+<div class="cover">🌑</div>
+<div class="info"><h3>Cold Heart</h3><p>AGGRE • Drill</p></div>
+<button class="playTrack" onclick="playTrack(1)">▶</button>
+</div>
+
+<div class="track">
+<div class="cover">♟</div>
+<div class="info"><h3>Play Chess</h3><p>AGGRE • Rap</p></div>
+<button class="playTrack" onclick="playTrack(2)">▶</button>
+</div>
+
+<div class="track">
+<div class="cover">🔥</div>
+<div class="info"><h3>Never Give Up</h3><p>AGGRE • Motivation</p></div>
+<button class="playTrack" onclick="playTrack(3)">▶</button>
+</div>
+</section>
+
+<section class="section">
+<h2>📜 Street Life Lyrics</h2>
+<div class="lyrics">
+Nakura mu streets, ndabona ibintu bitandukanye.<br>
+Abavuga ngo ni brothers, ejo bagaca bakubana.<br>
+Everybody wants money, nobody wants pain.<br>
+Mu maso baraseka, mu mutima full of rain.<br><br>
+
+Trust is expensive, sinayitanga free.<br>
+Too many fake faces, now I move low-key.<br>
+Dreams in my head, every day another hustle.<br>
+Life keeps moving, I survive every struggle.
+</div>
+</section>
+
+<footer>AGGRE MUSIC © 2026</footer>
+
+<div class="player">
+<div class="playerTop">
+<div>
+<div id="currentTitle">Street Life</div>
+<div class="artist">AGGRE</div>
+</div>
+<div class="controls">
+<button onclick="previous()">⏮</button>
+<button id="playPause" onclick="togglePlay()">▶</button>
+<button onclick="next()">⏭</button>
+</div>
+</div>
+<div class="progress"><div id="progressFill"></div></div>
+</div>
+
+<audio id="audio"></audio>
+
+<script>
+const tracks=[
+{title:"Street Life",file:"music/street-life.mp3"},
+{title:"Cold Heart",file:"music/cold-heart.mp3"},
+{title:"Play Chess",file:"music/play-chess.mp3"},
+{title:"Never Give Up",file:"music/never-give-up.mp3"}
+];
+
+let current=0;
+const audio=document.getElementById("audio");
+
+function playTrack(i){
+current=i;
+audio.src=tracks[current].file;
+audio.play().catch(()=>alert("MP3 ntiraboneka. Shira indirimbo muri folder music."));
+update();
+}
+
+function togglePlay(){
+if(!audio.src){playTrack(current);return}
+if(audio.paused){audio.play()}else{audio.pause()}
+update();
+}
+
+function next(){
+current=(current+1)%tracks.length;
+playTrack(current);
+}
+
+function previous(){
+current=(current-1+tracks.length)%tracks.length;
+playTrack(current);
+}
+
+function update(){
+document.getElementById("currentTitle").textContent=tracks[current].title;
+document.getElementById("playPause").textContent=audio.paused?"▶":"⏸";
+}
+
+audio.onplay=update;
+audio.onpause=update;
+audio.onended=next;
+
+audio.ontimeupdate=()=>{
+if(audio.duration){
+document.getElementById("progressFill").style.width=
+(audio.currentTime/audio.duration*100)+"%";
+}
+};
+</script>
+
+</body>
+  </html>
